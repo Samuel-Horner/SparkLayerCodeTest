@@ -5,6 +5,26 @@ info:
 
 paths:
   /:
+    delete:
+      summary: Remove a To-Do from the list
+      operationId: removeToDo
+      requestBody:
+        description: Remove a To-Do by index
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              required:
+                - index
+              index:
+                type: integer
+        required: true
+      responses:
+        "200":
+          description: Successful operation
+        "400":
+          description: Invalid input
     post:
       summary: Add a To-Do to the list
       operationId: createToDo

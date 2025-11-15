@@ -1,7 +1,7 @@
 <script lang="ts">
-  import type { TodoItem } from "./types";
+  import type { MouseEventHandler } from "svelte/elements";
 
-  const { title, description }: TodoItem = $props();
+  const { title, description, remove_function }: {title: string, description: string, remove_function: MouseEventHandler<HTMLButtonElement>}= $props();
 </script>
 
 <div class="todo">
@@ -10,7 +10,7 @@
     <p class="todo-description">{description}</p>
   </div>
   <div class="todo-remove">
-    <button class="todo-remove-button">Remove</button>
+    <button class="todo-remove-button" onclick={remove_function}>Remove</button>
   </div>
 </div>
 

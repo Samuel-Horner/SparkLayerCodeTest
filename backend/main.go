@@ -12,6 +12,10 @@ type ToDo struct {
 	Description string `json:"description"`
 }
 
+type DeleteTodoJSON struct {
+	Index int `json:"index"`
+}
+
 type ToDoList []ToDo
 
 const port int = 8080
@@ -59,6 +63,38 @@ func postHandler(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(toDo)
 }
 
+func deleteHandler(w http.ResponseWriter, r *http.Request) {
+	// https://pkg.go.dev/encoding/json#example-Decoder
+	var decoder *json.Decoder = json.NewDecoder(r.Body)
+	var deleteToDoJSON DeleteTodoJSON
+	var err error = decoder.Decode(&deleteToDoJSON)
+
+	if err != nil {
+		log.Print("Failed to decode request body with error: ", err)
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	if deleteToDoJSON.Index >= len(toDoList) {
+		log.Print("Invalid todo item - empty title or description.")
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	// Possible issue with memory leaking here
+	// See https://go.dev/wiki/SliceTricks discussion on cut/delete
+	// Assuming its a non-issue since strings are read only
+	toDoList = append(toDoList[:deleteToDoJSON.Index], toDoList[deleteToDoJSON.Index+1:]...)
+
+	log.Print("Deleted todo: ", deleteToDoJSON)
+	w.WriteHeader(http.StatusOK)
+}
+
+func optionsHandler(w http.ResponseWriter, r *http.Request) {
+	// Needed for the DELETE method to work (need to respond OK with cors settings since DELETE method disabled by default)
+	w.WriteHeader(http.StatusOK)
+}
+
 func defaultHandler(w http.ResponseWriter, r *http.Request) {
 	log.Print("Method not allowed: ", r.Method)
 	w.WriteHeader(http.StatusMethodNotAllowed)
@@ -66,6 +102,7 @@ func defaultHandler(w http.ResponseWriter, r *http.Request) {
 
 func ToDoListHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Methods", "GET, POST, DELETE, OPTIONS")
 
 	// Your code here
 	log.Print("Recieved ", r.Method, " for ", r.URL.Path, " from ", r.RemoteAddr)
@@ -75,6 +112,10 @@ func ToDoListHandler(w http.ResponseWriter, r *http.Request) {
 		getHandler(w, r)
 	case http.MethodPost:
 		postHandler(w, r)
+	case http.MethodDelete:
+		deleteHandler(w, r)
+	case http.MethodOptions:
+		optionsHandler(w, r)
 	default:
 		defaultHandler(w, r)
 	}

@@ -30,11 +30,16 @@
   }
 
   async function submitTodo(e: SubmitEvent) {
-    e.preventDefault(); // Cancell default url change behaviour
+    e.preventDefault(); // Cancel default url change behaviour
 
-    const formData = new FormData(e.target as HTMLFormElement) // https://stackoverflow.com/questions/64527549/svelte-form-onsubmit-type-typescript
+    // https://stackoverflow.com/questions/64527549/svelte-form-onsubmit-type-typescript
+    const form = e.target as HTMLFormElement
+    const formData = new FormData(form) 
 
-
+    if (!validateForm(formData)) {
+      alert("Invalid form values.");
+      return;
+    }
 
     try {
       const response = await fetch(backend_url, {
@@ -52,10 +57,38 @@
 
       todos.push(await response.json());
   
+      form.reset();
+
     } catch (e) {
       console.error("Could not connect to server. Ensure it is running.", e);
     }
-  } 
+  }
+
+  async function removeTodo(index: number) {
+    if (index >= todos.length) {
+      // Error not alert since this is only trigerable through console
+      console.error("Invalid remove index.");
+      return;
+    }
+
+    try {
+      const response = await fetch(backend_url, {
+        method: "DELETE",
+        body: JSON.stringify({
+          index: index
+        })
+      });
+
+      if (response.status !== 200) {
+        console.error("Error removing todo. Response status not 200");
+        return;
+      }
+
+      todos.splice(index, 1);
+    } catch (e) {
+      console.error("Could not connect to server. Ensure it is running.", e);
+    }
+  }
 
   // Initially fetch todos on page load
   $effect(() => {
@@ -69,8 +102,8 @@
   </header>
 
   <div class="todo-list">
-    {#each todos as todo}
-      <Todo title={todo.title} description={todo.description} />
+    {#each todos as todo, index}
+      <Todo title={todo.title} description={todo.description} remove_function={() => removeTodo(index)} />
     {/each}
   </div>
 
