@@ -9,6 +9,9 @@
     <p class="todo-title">{title}</p>
     <p class="todo-description">{description}</p>
   </div>
+  <div class="todo-remove">
+    <button class="todo-remove-button">Remove</button>
+  </div>
 </div>
 
 <style>
@@ -29,12 +32,12 @@
     margin: 10px 0px;
   }
 
-  .todo-details {
+  .todo-details, .todo-remove {
     display: flex;
     flex-direction: column;
     align-items: start;
 
-    padding: 15px 0px;
+    padding: 15px 10px 15px 0px;
 
     max-width: 100%;
   }
@@ -45,6 +48,8 @@
 
     margin: 0px;
     margin-bottom: 5px;
+
+    text-align: left;
 
     max-width: 100%;
 
@@ -63,5 +68,8 @@
     max-width: 100%;
 
     word-break: break-all;
+  }
+
+  .todo-remove-button {
   }
 </style>
