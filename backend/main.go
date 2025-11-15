@@ -33,7 +33,24 @@ func getHandler(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(toDoList)
 }
 
-func postHandler(w http.ResponseWriter, r *http.Request) {}
+func postHandler(w http.ResponseWriter, r *http.Request) {
+	var decoder *json.Decoder = json.NewDecoder(r.Body)
+	var toDo ToDo
+	var err error = decoder.Decode(&toDo)
+
+	if err != nil {
+		log.Print("Failed to decode request body with error: ", err)
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	toDoList = append(toDoList, toDo)
+
+	log.Print("Returning item: ", toDo)
+	w.WriteHeader(http.StatusOK)
+
+	json.NewEncoder(w).Encode(toDo)
+}
 
 func defaultHandler(w http.ResponseWriter, r *http.Request) {
 	log.Print("Method not allowed: ", r.Method)
@@ -49,8 +66,8 @@ func ToDoListHandler(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case http.MethodGet:
 		getHandler(w, r)
-	// case http.MethodPost:
-	// 	postHandler(w, r)
+	case http.MethodPost:
+		postHandler(w, r)
 	default:
 		defaultHandler(w, r)
 	}
