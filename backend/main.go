@@ -101,6 +101,7 @@ func defaultHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func ToDoListHandler(w http.ResponseWriter, r *http.Request) {
+	// Always respond with these settings
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.Header().Set("Access-Control-Allow-Methods", "GET, POST, DELETE, OPTIONS")
 

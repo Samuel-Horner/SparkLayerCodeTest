@@ -23,6 +23,7 @@
   }
 
   function validateForm(formData: FormData) : boolean {
+    // Ensures no form fields are empty. Duplicated on the server.
     if (formData.get("title") == "") return false;
     if (formData.get("description") == "") return false;
 
@@ -55,7 +56,9 @@
         return;
       }
 
-      todos.push(await response.json());
+      // todos.push(await response.json());
+      fetchTodos(); // Re-fetch todos for simplicity. The above avoids this, but may introduce client-server
+      //               desync if server logic is changed.
   
       form.reset();
 
@@ -66,7 +69,7 @@
 
   async function removeTodo(index: number) {
     if (index >= todos.length) {
-      // Error not alert since this is only trigerable through console
+      // Error not alert since this is only triggerable through console
       console.error("Invalid remove index.");
       return;
     }
@@ -84,7 +87,9 @@
         return;
       }
 
-      todos.splice(index, 1);
+      // todos.splice(index, 1);
+      fetchTodos(); // Re-fetch todos for simplicity. The above avoids this, but may introduce client-server
+      //               desync if server logic is changed.
     } catch (e) {
       console.error("Could not connect to server. Ensure it is running.", e);
     }
