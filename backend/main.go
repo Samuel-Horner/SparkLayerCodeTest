@@ -20,6 +20,8 @@ var toDoList ToDoList = ToDoList{}
 
 func main() {
 	// Your code here
+
+	// https://pkg.go.dev/net/http#example-HandleFunc
 	http.HandleFunc("/", ToDoListHandler)
 	log.Fatal(http.ListenAndServe(":"+strconv.Itoa(port), nil))
 }

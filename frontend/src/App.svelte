@@ -2,21 +2,51 @@
   import Todo from "./lib/Todo.svelte";
   import type { TodoItem } from "./lib/types";
 
+  const backend_url = "http://localhost:8080/"
+
   let todos: TodoItem[] = $state([]);
 
   async function fetchTodos() {
     try {
-      const response = await fetch("http://localhost:8080/");
+      const response = await fetch(backend_url);
+
       if (response.status !== 200) {
         console.error("Error fetching data. Response status not 200");
         return;
       }
 
       todos = await response.json();
+
     } catch (e) {
       console.error("Could not connect to server. Ensure it is running.", e);
     }
   }
+
+  async function submitTodo(e: SubmitEvent) {
+    e.preventDefault(); // Cancell default url change behaviour
+
+    const formData = new FormData(e.target as HTMLFormElement) // https://stackoverflow.com/questions/64527549/svelte-form-onsubmit-type-typescript
+
+    try {
+      const response = await fetch(backend_url, {
+        method: "POST",
+        body: JSON.stringify({
+          title: formData.get("title"),
+          description: formData.get("description")
+        })
+      });
+
+      if (response.status !== 200) {
+        console.error("Error submitting todo. Response status not 200");
+        return;
+      }
+
+      todos.push(await response.json());
+  
+    } catch (e) {
+      console.error("Could not connect to server. Ensure it is running.", e);
+    }
+  } 
 
   // Initially fetch todos on page load
   $effect(() => {
@@ -36,7 +66,7 @@
   </div>
 
   <h2 class="todo-list-form-header">Add a Todo</h2>
-  <form class="todo-list-form">
+  <form class="todo-list-form" onsubmit={submitTodo}>
     <input placeholder="Title" name="title" />
     <input placeholder="Description" name="description" />
     <button>Add Todo</button>
