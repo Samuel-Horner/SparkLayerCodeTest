@@ -22,10 +22,19 @@
     }
   }
 
+  function validateForm(formData: FormData) : boolean {
+    if (formData.get("title") == "") return false;
+    if (formData.get("description") == "") return false;
+
+    return true;
+  }
+
   async function submitTodo(e: SubmitEvent) {
     e.preventDefault(); // Cancell default url change behaviour
 
     const formData = new FormData(e.target as HTMLFormElement) // https://stackoverflow.com/questions/64527549/svelte-form-onsubmit-type-typescript
+
+
 
     try {
       const response = await fetch(backend_url, {

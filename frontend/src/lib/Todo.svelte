@@ -35,6 +35,8 @@
     align-items: start;
 
     padding: 15px 0px;
+
+    max-width: 100%;
   }
 
   .todo-title {
@@ -43,6 +45,10 @@
 
     margin: 0px;
     margin-bottom: 5px;
+
+    max-width: 100%;
+
+    word-break: break-all;
   }
 
   .todo-description {
@@ -53,5 +59,9 @@
     color: #ddd;
 
     text-align: left;
+
+    max-width: 100%;
+
+    word-break: break-all;
   }
 </style>

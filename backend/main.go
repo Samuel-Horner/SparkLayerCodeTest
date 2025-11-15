@@ -34,12 +34,19 @@ func getHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func postHandler(w http.ResponseWriter, r *http.Request) {
+	// https://pkg.go.dev/encoding/json#example-Decoder
 	var decoder *json.Decoder = json.NewDecoder(r.Body)
 	var toDo ToDo
 	var err error = decoder.Decode(&toDo)
 
 	if err != nil {
 		log.Print("Failed to decode request body with error: ", err)
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	if toDo.Title == "" || toDo.Description == "" {
+		log.Print("Invalid todo item - empty title or description.")
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
