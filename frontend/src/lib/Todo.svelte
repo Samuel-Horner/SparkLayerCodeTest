@@ -70,6 +70,4 @@
     word-break: break-all;
   }
 
-  .todo-remove-button {
-  }
 </style>

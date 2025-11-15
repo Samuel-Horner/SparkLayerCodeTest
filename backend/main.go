@@ -30,7 +30,7 @@ func main() {
 	log.Fatal(http.ListenAndServe(":"+strconv.Itoa(port), nil))
 }
 
-func getHandler(w http.ResponseWriter, r *http.Request) {
+func getHandler(w http.ResponseWriter, _ *http.Request) {
 	log.Print("Returning list: ", toDoList)
 	w.WriteHeader(http.StatusOK)
 
@@ -90,7 +90,7 @@ func deleteHandler(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 }
 
-func optionsHandler(w http.ResponseWriter, r *http.Request) {
+func optionsHandler(w http.ResponseWriter, _ *http.Request) {
 	// Needed for the DELETE method to work (need to respond OK with cors settings since DELETE method disabled by default)
 	w.WriteHeader(http.StatusOK)
 }
